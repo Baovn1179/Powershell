@@ -1,18 +1,43 @@
+param(
+    [string]$Query,
+    [string]$QueryType,
+    [string]$Server = "localhost\SQLEXPRESS",
+    [string]$Database
+);
+
+[Console]::OutputEncoding = [Text.Encoding]::Unicode;
+
 Add-Type -AssemblyName System.Data.SqlClient;
 
-$conn = [System.Data.SqlClient.SqlConnection]::new("Server=DESKTOP-EBJQ319\SQLEXPRESS;Database=ProleBlog;Trusted_Connection=True");
+$conn_str = "Server=$Server;Database=$Database;Trusted_Connection=True";
+$conn = [System.Data.SqlClient.SqlConnection]::new($conn_str);
+
+$command = [Data.SqlClient.SqlCommand]::new($query, $conn);
 
 $conn.Open();
 
-$query = "Select * from users";
 
-$command = [System.Data.SqlClient.SqlCommand]::new($query, $conn);
-
-$reader = $command.ExecuteReader();
-
-while ($reader.Read()) 
+switch ($QueryType) 
 {
-    $reader;
+    "Read" 
+    {
+        $reader = $command.ExecuteReader();
+        $count = $reader.FieldCount;
+        while ($reader.Read())
+        {
+            for ($i = 0; $i -lt $count; $i++) 
+            {
+                Write-Host $reader[$i];
+            }
+            Write-Host "==================";
+        }
+    }
+    "Execute" 
+    {
+        $command.ExecuteNonQuery();
+    }
+    default { Write-Host "Vui lòng nhập tham số -QueryType là Read hoặc Execute"; break; }
 }
+
 
 $conn.Close();
