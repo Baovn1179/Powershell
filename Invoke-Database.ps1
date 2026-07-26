@@ -2,8 +2,15 @@ param(
     [string]$Query,
     [string]$QueryType,
     [string]$Server = "localhost\SQLEXPRESS",
-    [string]$Database
+    [string]$Database,
+    [switch]$Syntax
 );
+
+if ($Syntax) {
+    Write-Host "Cú pháp: .\Invoke-Database.ps1 -Query <Câu lệnh SQL> -QueryType <Read|Execute> -Server <Tên server> -Database <Tên database> [-Syntax]";
+    Write-Host "Ví dụ: .\Invoke-Database.ps1 -Query 'SELECT * FROM TableName' -QueryType Read -Server localhost\SQLEXPRESS -Database DatabaseName";
+    exit;
+}
 
 [Console]::OutputEncoding = [Text.Encoding]::Unicode;
 
